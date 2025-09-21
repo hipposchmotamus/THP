@@ -1,0 +1,95 @@
+/* === Specter font family === */
+@font-face {
+    font-family: 'Specter';
+    src: url('fonts/Specter-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Specter';
+    src: url('fonts/Specter-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Specter';
+    src: url('fonts/Specter-Italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'Specter';
+    src: url('fonts/Specter-BoldItalic.woff2') format('woff2');
+    font-weight: 700;
+    font-style: italic;
+  }
+  
+  /* === Layout === */
+  html, body {
+    margin: 0;
+    padding:0;
+    width: 100%;
+    background-color: white;
+    color: black;
+    font-family: 'Specter', sans-serif;
+    overflow: hidden;
+    height: 100%;
+  }
+  
+  #topText {
+    font-size: 60px;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  #counterText {
+    font-size: 30px;
+    font-weight: 400;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  #container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    aspect-ratio: 3/4; /* <-- replace with your real PNG ratio */
+    background: url('background.png') center center no-repeat;
+    background-size: contain;
+    touch-action: none;
+  }
+  
+  canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .dot {
+    width: 12px;
+    height: 12px;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+  }
+  
+  #createButton {
+    width: 150px;
+    height: 50px;
+    margin: 20px auto;
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    opacity: 0.5;
+  }
+  
