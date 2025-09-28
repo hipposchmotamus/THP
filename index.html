@@ -1,21 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Consciousness Game</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+
 </head>
-<body>
-  <div id="topText">Can you create consciousness?</div>
-  <div id="counterText">phi = 0</div>
+<body id="body">
+  <img src="CAPTURED_IMAGE_URL" style="max-width:100%; height:auto; opacity:0;">
+  <div id="top">
+    <div id="topText"> Can you create <br> <span class="c">consciousness?</span> </div>
+    <div id="counterText" style="opacity:0;">0 phi</div>
+  </div>
 
   <div id="container">
-    <img src="touchShape.png" id="touchShape" crossorigin="anonymous" style="display:none;">
     <canvas id="canvas"></canvas>
   </div>
 
-  <button id="createButton" disabled>Create</button>
+  <div id="bottom">
+    <div id="bottomText" style="opacity:0;">No consciousness found</div>
+    <div id="buttons">
+      <button id="backButton" type="button" disabled style="opacity:0.5;"></button>
+      <button id="createButton" disabled style="opacity:0.5;">Create</button>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
