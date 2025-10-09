@@ -35,7 +35,6 @@ function updateCounter() {
 
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
-updateCounter();
 
 function loadShape() {
     shapeCanvas = document.createElement('canvas');
@@ -171,7 +170,7 @@ function drawAll() {
         dot.el.style.pointerEvents = 'none';
     });
     
-    
+    updateCounter();
     
 }
 
