@@ -8,6 +8,9 @@ const backButton = document.getElementById('backButton');
 const topText = document.getElementById('topText');
 const bottomText = document.getElementById('bottomText');
 const bodyEl = document.getElementById('body');
+const N = dots.length;
+    const C = lines.length;
+    const Phi = 5*N + 2*C;
 
 let dots = [], lines = [], actions = [];
 let lastSelectedDot = null, dragging = false;
