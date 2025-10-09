@@ -10,7 +10,6 @@ const topText = document.getElementById('topText');
 const bottomText = document.getElementById('bottomText');
 const bodyEl = document.getElementById('body');
 
-
 let dots = [];
 let lines = [];
 let counter = 0;
@@ -41,8 +40,6 @@ function resizeCanvas() {
     if (shapeReady) loadShape();
     drawAll();
 }
-
-
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
