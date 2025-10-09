@@ -9,6 +9,7 @@ const topText = document.getElementById('topText');
 const bottomText = document.getElementById('bottomText');
 const bodyEl = document.getElementById('body');
 
+
 let dots = [], lines = [], actions = [];
 let lastSelectedDot = null, dragging = false;
 let shapeReady = false, shapeCanvas, shapeCtx;
@@ -24,8 +25,17 @@ function resizeCanvas() {
     if (shapeReady) loadShape();
     drawAll();
 }
+
+function updateCounter() {
+  const N = dots.length;
+  const C = lines.length;
+  const Phi = 5 * N + 2 * C;
+  counterText.textContent = `${Phi} phi`;
+}
+
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
+updateCounter();
 
 function loadShape() {
     shapeCanvas = document.createElement('canvas');
