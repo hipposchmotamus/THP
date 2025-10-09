@@ -10,6 +10,7 @@ const topText = document.getElementById('topText');
 const bottomText = document.getElementById('bottomText');
 const bodyEl = document.getElementById('body');
 
+
 let dots = [];
 let lines = [];
 let counter = 0;
