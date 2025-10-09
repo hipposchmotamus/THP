@@ -162,7 +162,7 @@ function drawAll() {
     });
     
     
-    
+    counterText.textContent = `${phi} phi`;
 }
 
 function drawArrow(x, y, angle, lineWidth = 2) {
