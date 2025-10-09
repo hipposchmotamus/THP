@@ -165,7 +165,7 @@ function drawAll() {
     });
     
     
-    counterText.textContent = `${phi} phi`;
+   
 }
 
 function drawArrow(x, y, angle, lineWidth = 2) {
@@ -208,6 +208,7 @@ function handleTouch(e) {
             dragging = true;
         }
         drawAll();
+        counterText.textContent = `${phi} phi`;
         return;
         
     }
