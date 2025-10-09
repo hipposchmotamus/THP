@@ -233,6 +233,7 @@ if (tooClose) return; // skip creating dot
     lastSelectedDot = dot;
     dragging = true;
     drawAll();
+    counterText.textContent = `${phi} phi`;
 }
 
 
@@ -263,6 +264,7 @@ function connectDots(dotA, dotB) {
         actions.push({type:'line', line});
     }
     drawAll();
+    counterText.textContent = `${phi} phi`;
 }
 
 function growDot(dot) {
@@ -270,6 +272,7 @@ function growDot(dot) {
     if (dot.el) {
       dot.el.style.width = dot.size + 'px';
       dot.el.style.height = dot.size + 'px';
+        counterText.textContent = `${phi} phi`;
     }
   }
 
@@ -310,6 +313,7 @@ function undoLastAction() {
 
     // Redraw after undo
     drawAll();
+    counterText.textContent = `${phi} phi`;
 
     // Disable back button if no actions left
     if (actions.length === 0) {
@@ -332,6 +336,7 @@ backButton.addEventListener('click', (e) => {
     }
 
     undoLastAction();
+    counterText.textContent = `${phi} phi`;
 });
 
 
