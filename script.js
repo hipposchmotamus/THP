@@ -4,37 +4,21 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const counterText = document.getElementById('counterText');
 const createButton = document.getElementById('createButton');
-const touchShape = document.getElementById('touchShape');
 const backButton = document.getElementById('backButton');
 const topText = document.getElementById('topText');
 const bottomText = document.getElementById('bottomText');
 const bodyEl = document.getElementById('body');
 
-let dots = [];
-let lines = [];
-let counter = 0;
-let lastSelectedDot = null;
-let dragging = false;
 let dots = [], lines = [], actions = [];
 let lastSelectedDot = null, dragging = false;
 let shapeReady = false, shapeCanvas, shapeCtx;
 let locked = false;
 
-// Shape hit-test canvas
-let shapeReady = false;
-let shapeCanvas, shapeCtx;
 const shapeImage = new Image();
 shapeImage.src = 'touchShape.png';
 shapeImage.onload = () => loadShape();
 
-// Resize canvas to container
 function resizeCanvas() {
-  canvas.width = container.clientWidth;
-  canvas.height = container.clientHeight;
-
-  if (touchShape.complete) {
-    loadShape();
-  }
     canvas.width = container.offsetWidth;
     canvas.height = container.offsetHeight;
     if (shapeReady) loadShape();
@@ -43,16 +27,7 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-// Load and scale shape image into offscreen canvas
 function loadShape() {
-  shapeCanvas = document.createElement('canvas');
-  shapeCanvas.width = container.clientWidth;
-  shapeCanvas.height = container.clientHeight;
-  shapeCtx = shapeCanvas.getContext('2d');
-  shapeCtx.drawImage(touchShape, 0, 0, shapeCanvas.width, shapeCanvas.height);
-  shapeReady = true;
-}
-touchShape.onload = loadShape;
     shapeCanvas = document.createElement('canvas');
     shapeCanvas.width = container.offsetWidth;
     shapeCanvas.height = container.offsetHeight;
@@ -70,7 +45,6 @@ touchShape.onload = loadShape;
     const offsetX = (cW - drawW) / 2;
     const offsetY = (cH - drawH) / 2;
 
-// Check if point inside shape
     shapeCtx.clearRect(0, 0, cW, cH);
     shapeCtx.drawImage(shapeImage, offsetX, offsetY, drawW, drawH);
     shapeLayout = {
@@ -83,9 +57,6 @@ touchShape.onload = loadShape;
     shapeReady = true;
 }
 function isInsideShape(x, y) {
-  if (!shapeReady) return false;
-  const pixel = shapeCtx.getImageData(Math.floor(x), Math.floor(y), 1, 1).data;
-  return pixel[3] > 0;
     if (!shapeReady) return false;
 
     if (!isInsideShape._maskCtx) {
@@ -107,33 +78,7 @@ function isInsideShape(x, y) {
     return pixel[3] > 0;
 }
 
-// Draw lines + arrows
-function drawLines() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  lines.forEach(line => {
-    ctx.strokeStyle = 'red';
-    ctx.lineWidth = line.width;
-    ctx.beginPath();
-    ctx.moveTo(line.from.x, line.from.y);
-    ctx.lineTo(line.to.x, line.to.y);
-    ctx.stroke();
 
-    const angle = Math.atan2(line.to.y - line.from.y, line.to.x - line.from.x);
-    const arrowSize = 10;
-    ctx.beginPath();
-    ctx.moveTo(line.to.x, line.to.y);
-    ctx.lineTo(
-      line.to.x - arrowSize * Math.cos(angle - Math.PI / 6),
-      line.to.y - arrowSize * Math.sin(angle - Math.PI / 6)
-    );
-    ctx.lineTo(
-      line.to.x - arrowSize * Math.cos(angle + Math.PI / 6),
-      line.to.y - arrowSize * Math.sin(angle + Math.PI / 6)
-    );
-    ctx.closePath();
-    ctx.fillStyle = 'red';
-    ctx.fill();
-  });
 
 
 function toNormalized(x, y) {
@@ -145,14 +90,6 @@ function toNormalized(x, y) {
     };
 }
 
-// Update counter + text
-function updateCounter() {
-  counterText.textContent = `phi = ${counter}`;
-  if (counter <= 30) {
-    counterText.textContent += " - low phi. no consciousness found.";
-  } else {
-    counterText.textContent += " - some consciousness found.";
-  }
 
 function toAbsolute(nx, ny) {
     if (!shapeLayout) return { x: 0, y: 0 };
@@ -163,10 +100,8 @@ function toAbsolute(nx, ny) {
     };
 }
 
-// Find dot under coords
 
 function getDotAt(x, y) {
-  return dots.find(d => Math.hypot(d.x - x, d.y - y) <= 12);
     return dots.find(d => {
         const abs = toAbsolute(d.nx, d.ny);
         const dx = abs.x - x;
@@ -243,25 +178,7 @@ function drawArrow(x, y, angle, lineWidth = 2) {
     ctx.fill();
 }
 
-// Handle touch/click
 function handleTouch(e) {
-  e.preventDefault();
-  const rect = container.getBoundingClientRect();
-  const touch = e.touches ? e.touches[0] : e;
-  const x = touch.clientX - rect.left;
-  const y = touch.clientY - rect.top;
-
-  if (!isInsideShape(x, y)) return;
-
-  const existingDot = getDotAt(x, y);
-  if (existingDot) {
-    if (dragging && lastSelectedDot && lastSelectedDot !== existingDot) {
-      connectDots(lastSelectedDot, existingDot);
-      dragging = false;
-      lastSelectedDot = null;
-    } else {
-      lastSelectedDot = existingDot;
-      dragging = true;
     e.preventDefault();
     if (locked) return;
 
@@ -290,10 +207,7 @@ function handleTouch(e) {
         drawAll();
         return;
         
-}
-  } else {
-    const dot = { x, y };
-    dots.push(dot);
+    }
 
     const minDistance = 20+ 2; // dot radius (16/2) + 2px safe space
 const tooClose = dots.some(d => {
@@ -306,46 +220,26 @@ if (tooClose) return; // skip creating dot
     // Create dot with normalized coordinates
     const { nx, ny } = toNormalized(x, y);
     const dot = { nx, ny, size: 16, connections: 0, el: null };
-const dotEl = document.createElement('div');
-dotEl.className = 'dot';
-    dotEl.style.left = x + 'px';
-    dotEl.style.top = y + 'px';
-container.appendChild(dotEl);
+    const dotEl = document.createElement('div');
+    dotEl.className = 'dot';
+    container.appendChild(dotEl);
     dot.el = dotEl;
     dots.push(dot);
 
-    counter += 2;
-    if (counter > 0) createButton.disabled = false;
     actions.push({ type: 'dot', dot });
     createButton.disabled = false; createButton.style.opacity = 1;
     backButton.disabled = false; backButton.style.opacity = 1;
 
-lastSelectedDot = dot;
-dragging = true;
-  }
-  drawLines();
-  updateCounter();
+    lastSelectedDot = dot;
+    dragging = true;
     drawAll();
 }
 
-// Connect two dots
 
 
 
 
 function connectDots(dotA, dotB) {
-  const existingLine = lines.find(
-    l => (l.from === dotA && l.to === dotB) || (l.from === dotB && l.to === dotA)
-  );
-  if (existingLine) {
-    existingLine.width += 2;
-    counter += 10;
-  } else {
-    lines.push({ from: dotA, to: dotB, width: 2 });
-    counter += 10;
-  }
-  updateCounter();
-  drawLines();
     if (locked) return;
     let line = lines.find(l => (l.from===dotA && l.to===dotB));
     let reverse = lines.find(l => l.from === dotB && l.to === dotA);
@@ -371,7 +265,6 @@ function connectDots(dotA, dotB) {
     drawAll();
 }
 
-// Events
 function growDot(dot) {
     dot.size += 0.5;
     if (dot.el) {
@@ -444,12 +337,6 @@ backButton.addEventListener('click', (e) => {
 
 
 createButton.addEventListener('click', () => {
-  if (createButton.textContent === 'Create') {
-    createButton.textContent = 'Try Again';
-    document.body.style.backgroundColor = 'black';
-  } else {
-    location.reload();
-  }
     if (dots.length === 0) return;
 
     const N = dots.length;
@@ -483,8 +370,81 @@ function enterState(state, phi) {
         createButton.style.color = '#96244c';
         createButton.style.border = 'none';
         createButton.onclick = () => {
-            localStorage.clear();
-            window.location.reload();
+            if (!shapeReady) return;
+        
+            const counterRect = counterText.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            const bottomRect = bottomText.getBoundingClientRect();
+        
+            // Compute top and bottom of the area to capture
+            const top = counterRect.top + window.scrollY;
+            const bottom = bottomRect.bottom + window.scrollY;
+            const height = bottom - top;
+        
+            // Square width = height
+            const targetWidth = height;
+        
+            // Center horizontally on the shape
+            const centerX = containerRect.left + containerRect.width / 2;
+            const left = centerX - targetWidth / 2;
+        
+            html2canvas(document.body, { backgroundColor: null, scrollY: -window.scrollY }).then(canvas => {
+                const scale = canvas.width / document.body.clientWidth;
+                const cropX = left * scale;
+                const cropY = top * scale;
+                const cropWidth = targetWidth * scale;
+                const cropHeight = height * scale;
+        
+                const croppedCanvas = document.createElement('canvas');
+                croppedCanvas.width = targetWidth;
+                croppedCanvas.height = height;
+                const ctx = croppedCanvas.getContext('2d');
+        
+                ctx.drawImage(
+                    canvas,
+                    cropX, cropY, cropWidth, cropHeight, // source
+                    0, 0, targetWidth, height            // destination
+                );
+        
+                const imgData = croppedCanvas.toDataURL('image/png');
+        
+                // Replace the body with just the screenshot
+                document.body.innerHTML = `
+                    <style>
+                        @page {
+                            size: 10.5cm 10.5cm;
+                            margin: 0;
+                        }
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            height: 100vh;
+                        }
+                        img {
+                            width: 10.5cm;
+                            height: 10.5cm;
+                            object-fit: contain;
+                        }
+                    </style>
+                    <img id="printImage" src="${imgData}" alt="screenshot">
+                `;
+        
+                // Wait until the image fully loads
+                const printImage = document.getElementById('printImage');
+                printImage.onload = () => {
+                    // After print (or cancel), refresh page
+                    window.onafterprint = () => {
+                        localStorage.clear();
+                        window.location.reload();
+                    };
+        
+                    // Trigger print
+                    window.print();
+                };
+            });
         };
         
         
@@ -509,8 +469,81 @@ function enterState(state, phi) {
         createButton.style.color = '#96244c';
         createButton.style.border = 'none';
         createButton.onclick = () => {
-            localStorage.clear();
-            window.location.reload();
+            if (!shapeReady) return;
+        
+            const counterRect = counterText.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            const bottomRect = bottomText.getBoundingClientRect();
+        
+            // Compute top and bottom of the area to capture
+            const top = counterRect.top + window.scrollY;
+            const bottom = bottomRect.bottom + window.scrollY;
+            const height = bottom - top;
+        
+            // Square width = height
+            const targetWidth = height;
+        
+            // Center horizontally on the shape
+            const centerX = containerRect.left + containerRect.width / 2;
+            const left = centerX - targetWidth / 2;
+        
+            html2canvas(document.body, { backgroundColor: null, scrollY: -window.scrollY }).then(canvas => {
+                const scale = canvas.width / document.body.clientWidth;
+                const cropX = left * scale;
+                const cropY = top * scale;
+                const cropWidth = targetWidth * scale;
+                const cropHeight = height * scale;
+        
+                const croppedCanvas = document.createElement('canvas');
+                croppedCanvas.width = targetWidth;
+                croppedCanvas.height = height;
+                const ctx = croppedCanvas.getContext('2d');
+        
+                ctx.drawImage(
+                    canvas,
+                    cropX, cropY, cropWidth, cropHeight, // source
+                    0, 0, targetWidth, height            // destination
+                );
+        
+                const imgData = croppedCanvas.toDataURL('image/png');
+        
+                // Replace the body with just the screenshot
+                document.body.innerHTML = `
+                    <style>
+                        @page {
+                            size: 10.5cm 10.5cm;
+                            margin: 0;
+                        }
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            height: 100vh;
+                        }
+                        img {
+                            width: 10.5cm;
+                            height: 10.5cm;
+                            object-fit: contain;
+                        }
+                    </style>
+                    <img id="printImage" src="${imgData}" alt="screenshot">
+                `;
+        
+                // Wait until the image fully loads
+                const printImage = document.getElementById('printImage');
+                printImage.onload = () => {
+                    // After print (or cancel), refresh page
+                    window.onafterprint = () => {
+                        localStorage.clear();
+                        window.location.reload();
+                    };
+        
+                    // Trigger print
+                    window.print();
+                };
+            });
         };
         
 
