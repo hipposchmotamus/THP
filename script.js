@@ -40,16 +40,10 @@ function resizeCanvas() {
     if (shapeReady) loadShape();
     drawAll();
 }
-function updateCounter() {
-  const N = dots.length;
-  const C = lines.length;
-  const Phi = 5 * N + 2 * C;
-  counterText.textContent = `${Phi} phi`;
-}
+
 
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
-updateCounter();
 
 // Load and scale shape image into offscreen canvas
 function loadShape() {
