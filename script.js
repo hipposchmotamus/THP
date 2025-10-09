@@ -8,9 +8,7 @@ const backButton = document.getElementById('backButton');
 const topText = document.getElementById('topText');
 const bottomText = document.getElementById('bottomText');
 const bodyEl = document.getElementById('body');
-const N = dots.length;
-    const C = lines.length;
-    const Phi = 5*N + 2*C;
+
 
 let dots = [], lines = [], actions = [];
 let lastSelectedDot = null, dragging = false;
@@ -20,6 +18,13 @@ let locked = false;
 const shapeImage = new Image();
 shapeImage.src = 'touchShape.png';
 shapeImage.onload = () => loadShape();
+
+function updateCounter() {
+  const N = dots.length;
+  const C = lines.length;
+  const Phi = 5 * N + 2 * C;
+  counterText.textContent = `${Phi} phi`;
+}
 
 function resizeCanvas() {
     canvas.width = container.offsetWidth;
@@ -208,7 +213,7 @@ function handleTouch(e) {
             dragging = true;
         }
         drawAll();
-        counterText.textContent = `${phi} phi`;
+        updateCounter();
         return;
         
     }
@@ -237,7 +242,7 @@ if (tooClose) return; // skip creating dot
     lastSelectedDot = dot;
     dragging = true;
     drawAll();
-    counterText.textContent = `${phi} phi`;
+    updateCounter();
 }
 
 
@@ -268,7 +273,7 @@ function connectDots(dotA, dotB) {
         actions.push({type:'line', line});
     }
     drawAll();
-    counterText.textContent = `${phi} phi`;
+    updateCounter();
 }
 
 function growDot(dot) {
@@ -276,8 +281,8 @@ function growDot(dot) {
     if (dot.el) {
       dot.el.style.width = dot.size + 'px';
       dot.el.style.height = dot.size + 'px';
-        counterText.textContent = `${phi} phi`;
     }
+    updateCounter();
   }
 
 // Event listeners
@@ -317,7 +322,8 @@ function undoLastAction() {
 
     // Redraw after undo
     drawAll();
-    counterText.textContent = `${phi} phi`;
+    updateCounter();
+
 
     // Disable back button if no actions left
     if (actions.length === 0) {
@@ -340,7 +346,7 @@ backButton.addEventListener('click', (e) => {
     }
 
     undoLastAction();
-    counterText.textContent = `${phi} phi`;
+    updateCounter();
 });
 
 
@@ -361,7 +367,7 @@ function enterState(state, phi) {
     locked = true;
     topText.style.opacity = 0;
     counterText.style.opacity = 1;
-    counterText.textContent = `${phi} phi`;
+    updateCounter();
 
     if (state==='high') {
         bodyEl.style.backgroundColor = '#be7d92';
