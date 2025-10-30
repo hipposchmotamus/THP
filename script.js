@@ -313,7 +313,7 @@ if (tooClose) return; // skip creating dot
 
     // Create dot with normalized coordinates
     const { nx, ny } = toNormalized(x, y);
-    const dot = { nx, ny, size: 24, connections: 0, el: null };
+    const dot = { nx, ny, size: 18, connections: 0, el: null };
     const dotEl = document.createElement('div');
     dotEl.className = 'dot';
     container.appendChild(dotEl);
