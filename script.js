@@ -1,4 +1,3 @@
-
 // script.js
 const socket = new WebSocket("wss://kreatormator-7cd9cf35d253.herokuapp.com:443");
 
