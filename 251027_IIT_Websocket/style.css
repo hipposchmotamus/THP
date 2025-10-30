@@ -1,0 +1,72 @@
+/* === Fonts === */
+@font-face { font-family:'Specter'; src:url('fonts/specter-medium.otf') format('opentype'); font-weight:400;}
+@font-face { font-family:'Specter'; src:url('fonts/specter-bold.otf') format('opentype'); font-weight:700;}
+@font-face { font-family:'Margaret'; src:url('fonts/Margaret-Bold.otf') format('opentype'); font-weight:700;}
+
+/* === Layout === */
+html, body {
+  margin: 0;
+  padding: 0;
+  width:100%; height:100%; display:flex; flex-direction:column; align-content: center;
+  background:#d5d6e7; color:black; font-family:'Specter', sans-serif; overflow:hidden;
+}
+#top { height: 18%; display: block; align-content: center; gap:0.5rem; text-align: center; overflow: hidden; 
+}
+#topText {display: none;   font-size:2.2rem; font-weight:700; text-align:center; margin-top:0.2rem; line-height:2.6rem;
+}
+
+.c { font-family:'Margaret'; font-size: 2.5rem; font-weight:700; }
+
+#counterText { font-size:2rem; font-weight:400; text-align:center; padding:0.2rem; transition:opacity 250ms ease; }
+
+#container {
+  position:relative;  height:60%; width: 80%; margin:auto; aspect-ratio:3/4;
+  background:url('background_w.png') center/contain no-repeat;
+  touch-action:none;
+}
+
+canvas {
+  position: relative;
+  top: 0;
+  left: 0;
+  height:100%;
+  width: 100%;
+  aspect-ratio:3/4;
+  background: transparent; 
+  z-index: 1; 
+}
+
+.dot {
+  /* default circle styling; inline styles override size/position */
+  background-color:#333c8b; border-radius:50%;
+  transform:translate(-50%, -50%); z-index:2;
+  pointer-events:none;
+  box-sizing: border-box;
+}
+
+/* bottom area */
+#bottom {height:22%; width:100%; display:block; gap: 1rem;
+}
+#record {
+  height: 35%; display:flex; gap:1rem; justify-content:center; margin:20px auto; max-width:500px;
+}
+#buttons {
+  height: 65%; display:flex; gap:1rem; justify-content:center; margin:20px auto; max-width:500px;
+}
+
+/* default create button styling */
+#createButton {
+  width:3rem; height:3rem; background: url('close.svg')center/contain no-repeat; color:black; border:0.2rem solid #333c8b; border-radius:90px;
+  font-size:2rem; font-weight:700; cursor:pointer; transition:all 220ms ease;
+}
+
+/* default back button styling */
+#backButton {
+  width:3rem; height:3rem; background: url('undo.svg')center/contain no-repeat; color:black; border:0.2rem solid #333c8b; border-radius:90px;
+  font-size:2rem; font-weight:700; cursor:pointer; transition:all 220ms ease;
+}
+
+#recordButton {
+  width:3rem; height:3rem; background: red; border:0.2rem solid red; border-radius:90px;
+  font-size:2rem; font-weight:700; cursor:pointer; transition:all 220ms ease; justify-content: center;
+}
