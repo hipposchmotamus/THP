@@ -1,4 +1,19 @@
+
 // script.js
+const socket = new WebSocket("wss://kreatormator-7cd9cf35d253.herokuapp.com:443");
+
+socket.addEventListener('open', () => {
+    console.log("✅ Connected to TouchDesigner");
+  });
+  
+  socket.addEventListener('error', (err) => {
+    console.error("❌ WebSocket error:", err);
+  });
+  
+  socket.addEventListener('close', () => {
+    console.log("🔌 WebSocket connection closed");
+  });
+
 const container = document.getElementById('container');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -8,12 +23,19 @@ const backButton = document.getElementById('backButton');
 const topText = document.getElementById('topText');
 const bottomText = document.getElementById('bottomText');
 const bodyEl = document.getElementById('body');
+const recordButton = document.getElementById ('recordButton')
 
 
-let dots = [], lines = [], actions = [];
+let dots = [], lines = [], actions = []; 
 let lastSelectedDot = null, dragging = false;
 let shapeReady = false, shapeCanvas, shapeCtx;
 let locked = false;
+let NS = 0;
+let CS = 0;
+let Phi = 0;
+let C = 0;
+let N = 0;
+let Rec= 0; 
 
 const shapeImage = new Image();
 shapeImage.src = 'touchShape.png';
@@ -26,12 +48,73 @@ function resizeCanvas() {
     drawAll();
 }
 
+const phiSounds = {
+    hello1: new Audio('/sounds/hallo_1.mp3'),
+    hello2: new Audio('/sounds/hallo_2.mp3'),
+    hello3: new Audio('/sounds/hallo_3.mp3')
+  };
+  
+  // Track which sounds have already played
+  const playedSounds = {
+    hello1: false,
+    hello2: false,
+    hello3: false
+  };
+
 function updateCounter() {
-  const N = dots.length;
-  const C = lines.length;
-  const Phi = 5 * N + 2 * C;
-  counterText.textContent = `${Phi} phi`;
+N = dots.length;
+C = lines.length;
+Phi = N+C+NS+CS
+ 
+counterText.textContent = `Φ=${Phi} | N=${N} | NS=${NS} | C=${C} | CS=${CS}`;
+counterText.textContent = `${Phi} phi`;
+
+  if (Phi === 80 && !playedSounds.hello1) {
+    phiSounds.hello1.play();
+    playedSounds.hello1 = true;
+  } else if (Phi === 100 && !playedSounds.hello2) {
+    phiSounds.hello2.play();
+    playedSounds.hello2 = true;
+  } else if (Phi === 120 && !playedSounds.hello3) {
+    phiSounds.hello3.play();
+    playedSounds.hello3 = true;
+  }
+  
 }
+
+// Function to update button visibility
+function updateButtonVisibility() {
+    if (Phi < 80) {
+        recordButton.style.display = 'none'; // hide
+    } else {
+        recordButton.style.display = 'inline-block'; // show
+    }
+}
+
+let lastSent = 0;
+const throttleInterval = 100; // milliseconds → 10 messages/sec
+
+function sendTouchdesigner() {
+    if (socket.readyState !== WebSocket.OPEN) return;
+
+    const now = Date.now();
+    if (now - lastSent < throttleInterval) return; // skip if too soon
+    lastSent = now;
+
+    const payload = {
+        phi: Phi,
+        n: N,
+        ns: NS,
+        c: C,
+        cs: CS,
+        rec: Rec
+    };
+
+    socket.send(JSON.stringify(payload));
+    console.log("📤 Sent to TouchDesigner:", JSON.stringify(payload));
+}
+    
+  
 
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
@@ -64,6 +147,7 @@ function loadShape() {
     };
     
     shapeReady = true;
+    sendTouchdesigner();
 }
 function isInsideShape(x, y) {
     if (!shapeReady) return false;
@@ -149,7 +233,7 @@ function drawAll() {
         ctx.beginPath();
         ctx.moveTo(startX, startY);
         ctx.lineTo(endX, endY);
-        ctx.strokeStyle = '#96244c';
+        ctx.strokeStyle = '#333c8b';
         ctx.lineWidth = line.width;
         ctx.stroke();
 
@@ -171,6 +255,7 @@ function drawAll() {
     });
     
     updateCounter();
+    updateButtonVisibility();
     
 }
 
@@ -183,7 +268,7 @@ function drawArrow(x, y, angle, lineWidth = 2) {
     ctx.lineTo(x - arrowSize * Math.cos(angle + Math.PI/6),
                y - arrowSize * Math.sin(angle + Math.PI/6));
     ctx.closePath();
-    ctx.fillStyle = '#96244c';
+    ctx.fillStyle = '#333c8b';
     ctx.fill();
 }
 
@@ -228,7 +313,7 @@ if (tooClose) return; // skip creating dot
 
     // Create dot with normalized coordinates
     const { nx, ny } = toNormalized(x, y);
-    const dot = { nx, ny, size: 16, connections: 0, el: null };
+    const dot = { nx, ny, size: 24, connections: 0, el: null };
     const dotEl = document.createElement('div');
     dotEl.className = 'dot';
     container.appendChild(dotEl);
@@ -242,6 +327,7 @@ if (tooClose) return; // skip creating dot
     lastSelectedDot = dot;
     dragging = true;
     drawAll();
+    sendTouchdesigner();
 }
 
 
@@ -254,6 +340,7 @@ function connectDots(dotA, dotB) {
     let reverse = lines.find(l => l.from === dotB && l.to === dotA);
     if (line) {
         line.count++; line.width += 0.5;
+        CS++;
         actions.push({type:'reinforce', line});
     } else {
         let parallelOffset = 0;
@@ -272,14 +359,17 @@ function connectDots(dotA, dotB) {
         actions.push({type:'line', line});
     }
     drawAll();
+    sendTouchdesigner();
 }
 
 function growDot(dot) {
     dot.size += 0.5;
+    NS++;
     if (dot.el) {
       dot.el.style.width = dot.size + 'px';
       dot.el.style.height = dot.size + 'px';
     }
+    sendTouchdesigner();
   }
 
 // Event listeners
@@ -319,6 +409,7 @@ function undoLastAction() {
 
     // Redraw after undo
     drawAll();
+    sendTouchdesigner();
 
     // Disable back button if no actions left
     if (actions.length === 0) {
@@ -341,239 +432,91 @@ backButton.addEventListener('click', (e) => {
     }
 
     undoLastAction();
+    updateButtonVisibility()
 });
 
+function wipeCanvas () {
+    if (actions.length === 0) return;
+      // Remove all dot elements from DOM
+  dots.forEach(dot => {
+    if (dot.el && dot.el.parentNode) {
+      container.removeChild(dot.el);
+    }
+    updateButtonVisibility()
+  });
 
+  // Reset all arrays and state
+  dots = [];
+  lines = [];
+  actions = [];
+  lastSelectedDot = null;
+  dragging = false;
+  locked = false;
 
-createButton.addEventListener('click', () => {
-    if (dots.length === 0) return;
+  // Reset counters
+  NS = 0;
+  CS = 0;
+  N = 0;
+  C = 0;
+  Phi = 0;
 
-    const N = dots.length;
-    const C = lines.length;
-    const Phi = 5*N + 2*C;
+  // Clear canvas visually
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (Phi > 80) enterState('high', Phi);
-    else if (Phi > 50) enterState('low', Phi);
-    else enterState('none', Phi);
-});
+  // Disable buttons again if you want
+  createButton.disabled = true;
+  createButton.style.opacity = 0.5;
+  backButton.disabled = true;
+  backButton.style.opacity = 0.5;
 
-function enterState(state, phi) {
-    locked = true;
-    topText.style.opacity = 0;
-    counterText.style.opacity = 1;
-    counterText.textContent = `${phi} phi`;
+  // Update UI and TouchDesigner
+  updateCounter();
+  sendTouchdesigner();
 
-    if (state==='high') {
-        bodyEl.style.backgroundColor = '#be7d92';
-        bottomText.textContent = 'Complex consciousness.';
-        bottomText.style.opacity = 1;
+  console.log("🧹 Canvas fully wiped and counters reset.");
+}
 
-        backButton.style.background = "url('close.svg') center/contain no-repeat";
-        backButton.style.border = '0.2rem solid #96244c';
-        backButton.style.backgroundColor = '#96244c'
-        backButton.style.opacity = 1; backButton.disabled=false;
+createButton.addEventListener('click', (e) => {
+    e.preventDefault();
 
-        createButton.textContent = 'print';
-        createButton.style.background = '#FFF';
-        createButton.style.boxShadow = '4px 4px 28px 0 #96244c';
-        createButton.style.color = '#96244c';
-        createButton.style.border = 'none';
-        createButton.onclick = () => {
-            if (!shapeReady) return;
-        
-            const counterRect = counterText.getBoundingClientRect();
-            const containerRect = container.getBoundingClientRect();
-            const bottomRect = bottomText.getBoundingClientRect();
-        
-            // Compute top and bottom of the area to capture
-            const top = counterRect.top + window.scrollY;
-            const bottom = bottomRect.bottom + window.scrollY;
-            const height = bottom - top;
-        
-            // Square width = height
-            const targetWidth = height;
-        
-            // Center horizontally on the shape
-            const centerX = containerRect.left + containerRect.width / 2;
-            const left = centerX - targetWidth / 2;
-        
-            html2canvas(document.body, { backgroundColor: null, scrollY: -window.scrollY }).then(canvas => {
-                const scale = canvas.width / document.body.clientWidth;
-                const cropX = left * scale;
-                const cropY = top * scale;
-                const cropWidth = targetWidth * scale;
-                const cropHeight = height * scale;
-        
-                const croppedCanvas = document.createElement('canvas');
-                croppedCanvas.width = targetWidth;
-                croppedCanvas.height = height;
-                const ctx = croppedCanvas.getContext('2d');
-        
-                ctx.drawImage(
-                    canvas,
-                    cropX, cropY, cropWidth, cropHeight, // source
-                    0, 0, targetWidth, height            // destination
-                );
-        
-                const imgData = croppedCanvas.toDataURL('image/png');
-        
-                // Replace the body with just the screenshot
-                document.body.innerHTML = `
-                    <style>
-                        @page {
-                            size: 10.5cm 10.5cm;
-                            margin: 0;
-                        }
-                        body {
-                            margin: 0;
-                            padding: 0;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            height: 100vh;
-                        }
-                        img {
-                            width: 10.5cm;
-                            height: 10.5cm;
-                            object-fit: contain;
-                        }
-                    </style>
-                    <img id="printImage" src="${imgData}" alt="screenshot">
-                `;
-        
-                // Wait until the image fully loads
-                const printImage = document.getElementById('printImage');
-                printImage.onload = () => {
-                    // After print (or cancel), refresh page
-                    window.onafterprint = () => {
-                        localStorage.clear();
-                        window.location.reload();
-                    };
-        
-                    // Trigger print
-                    window.print();
-                };
-            });
-        };
-        
-        
-        
-        
-        
-        
-
-    } else if (state==='low') {
-        bodyEl.style.backgroundColor = '#e8d3da';
-        bottomText.textContent = 'Simple consciousness.';
-        bottomText.style.opacity = 1;
-
-        backButton.style.background = "url('close.svg') center/contain no-repeat";
-        backButton.style.border = '0.2rem solid #96244c';
-        backButton.style.backgroundColor = '#96244c'
-        backButton.style.opacity = 1; backButton.disabled=false;
-
-        createButton.textContent = 'print';
-        createButton.style.background = '#FFF';
-        createButton.style.boxShadow = '4px 4px 28px 0 #96244c';
-        createButton.style.color = '#96244c';
-        createButton.style.border = 'none';
-        createButton.onclick = () => {
-            if (!shapeReady) return;
-        
-            const counterRect = counterText.getBoundingClientRect();
-            const containerRect = container.getBoundingClientRect();
-            const bottomRect = bottomText.getBoundingClientRect();
-        
-            // Compute top and bottom of the area to capture
-            const top = counterRect.top + window.scrollY;
-            const bottom = bottomRect.bottom + window.scrollY;
-            const height = bottom - top;
-        
-            // Square width = height
-            const targetWidth = height;
-        
-            // Center horizontally on the shape
-            const centerX = containerRect.left + containerRect.width / 2;
-            const left = centerX - targetWidth / 2;
-        
-            html2canvas(document.body, { backgroundColor: null, scrollY: -window.scrollY }).then(canvas => {
-                const scale = canvas.width / document.body.clientWidth;
-                const cropX = left * scale;
-                const cropY = top * scale;
-                const cropWidth = targetWidth * scale;
-                const cropHeight = height * scale;
-        
-                const croppedCanvas = document.createElement('canvas');
-                croppedCanvas.width = targetWidth;
-                croppedCanvas.height = height;
-                const ctx = croppedCanvas.getContext('2d');
-        
-                ctx.drawImage(
-                    canvas,
-                    cropX, cropY, cropWidth, cropHeight, // source
-                    0, 0, targetWidth, height            // destination
-                );
-        
-                const imgData = croppedCanvas.toDataURL('image/png');
-        
-                // Replace the body with just the screenshot
-                document.body.innerHTML = `
-                    <style>
-                        @page {
-                            size: 10.5cm 10.5cm;
-                            margin: 0;
-                        }
-                        body {
-                            margin: 0;
-                            padding: 0;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            height: 100vh;
-                        }
-                        img {
-                            width: 10.5cm;
-                            height: 10.5cm;
-                            object-fit: contain;
-                        }
-                    </style>
-                    <img id="printImage" src="${imgData}" alt="screenshot">
-                `;
-        
-                // Wait until the image fully loads
-                const printImage = document.getElementById('printImage');
-                printImage.onload = () => {
-                    // After print (or cancel), refresh page
-                    window.onafterprint = () => {
-                        localStorage.clear();
-                        window.location.reload();
-                    };
-        
-                    // Trigger print
-                    window.print();
-                };
-            });
-        };
-        
-
-    } else if (state === 'none') {
-        bodyEl.style.backgroundColor = '#8a8b92';
-        bottomText.textContent = 'No consciousness found.';
-        bottomText.style.opacity = 1;
-
-        backButton.classList.add('hidden');
-
-        createButton.textContent = 'try again';
-        createButton.style.border = '0.2rem solid #96244c';
-        createButton.style.background = '#FFF';
-        createButton.style.boxShadow = '4px 4px 28px 0 #AE053C';
-        createButton.style.color = '#96244c';
-        createButton.onclick = () => {
-            localStorage.clear();
-            window.location.reload();
-        };
+    if (locked) {
+        localStorage.clear();
+        window.location.reload();
+        return;
     }
 
-    drawLines();
-    updateCounter();
-}
+    wipeCanvas();
+});
+
+
+
+
+recordButton.addEventListener('mousedown', () => {
+    console.log("🟥 Mousedown triggered");
+    recordButton.style.opacity = 0.5;
+    Rec = 1;
+    sendTouchdesigner();
+  });
+  
+  recordButton.addEventListener('mouseup', () => {
+    console.log("⬜ Mouseup triggered");
+    recordButton.style.opacity = 1;
+    Rec = 0;
+    sendTouchdesigner();
+  });
+  
+  recordButton.addEventListener('touchstart', (e) => {
+    console.log("📱 Touchstart triggered");
+    e.preventDefault();
+    recordButton.style.opacity = 0.5;
+    Rec = 1;
+    sendTouchdesigner();
+  });
+  
+  recordButton.addEventListener('touchend', (e) => {
+    console.log("📱 Touchend triggered");
+    e.preventDefault();
+    recordButton.style.opacity = 1;
+    Rec = 0;
+    sendTouchdesigner();
+  });
