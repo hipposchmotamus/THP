@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kreadom</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+  <style>
+    html {
+        font-size: 16px; /* default desktop */
+    }
+
+    @media (max-width: 1026px) and (min-width: 768px) {
+        html {
+            font-size: 20px; /* tablet */
+        }
+    }
+
+    @media (max-width: 767px) {
+        html {
+            font-size: 24px; /* mobile */
+        }
+    }
+  </style>
+</head>
+<body id="body">
+  <div id="top">
+    <div id="phicounter">
+      <div id="phivalue"> 0 </div>
+      <div id="phisymbol"> Φ </div>
+    </div>
+    <div id="toptext">
+      <div id="topcontent">
+    <div id="topleft" class="visible">
+      <div id="tap">
+        <div id ="tapicon"></div>
+        <div id = "taptext"> Tippe für Neuronen </div>
+      </div>
+      <div id="drag">
+        <div id ="dragicon"></div>
+        <div id = "dragtext"> Ziehe für Verbindungen (bidirektional) </div>
+      </div>
+    </div>
+
+      <div id="topright" class="visible">
+        <div id="grey">
+          <div id ="greyicon"></div>
+          <div id = "greytext"> Einfaches Netzwerk </div>
+        </div>
+        <div id="red">
+          <div id ="redicon"></div>
+          <div id = "redtext"> Integriertes Netzwerk </div>
+        </div>
+      </div>
+    </div>
+    <div id="message" class="hidden"> Message here.</div> 
+
+  </div>
+
+</div>   
+  </div>
+
+
+  <div id="container">
+    <canvas id="canvas"></canvas>
+    <div id="p5-holder"></div>
+  </div>
+  <!-- inside <body>, below #container -->
+<div id="p5-holder" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:5;"></div>
+
+
+  <div id="bottom">
+    <div id="bLeft"> <button id="backbutton" class="visible"></button> </div>
+    <div id="bMiddle">
+      <div id ="swapslot"> 
+      <button id="createbutton"> ENTFALTEN </button>
+    </div>
+  </div>
+  <div id="bRight">
+    <button id="resetbutton"></button></div>
+  </div>
+  </div>
+  <script src="script.js"></script>
+
+</body>
+
+
+</html>
