@@ -1036,11 +1036,11 @@ function disableTimeout() {
     "audio/C1.mp3",
     "audio/C2.mp3",
     "audio/C3.mp3",
-    "audio/C1.mp3",
-    "audio/C2.mp3",
-    "audio/C3.mp3",
-    "audio/C1.mp3",
-    "audio/C2.mp3"
+    "audio/C4.mp3",
+    "audio/C5.mp3",
+    "audio/C6.mp3",
+    "audio/C7.mp3",
+    "audio/C8.mp3"
   ];
   
   let currentAudio = null;
