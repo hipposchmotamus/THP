@@ -667,6 +667,8 @@ backButton.classList.add ("hidden");
 backButton.style.opacity ="0";
 resetButton.classList.add ("hidden");
 resetButton.classList.remove ("visible");
+runP5();
+
 if (Phi <49) { 
 setState(ButtonState.AGAIN); 
 runTimeout();   
@@ -681,8 +683,7 @@ setTimeout(function() {
     sendTouchdesigner();
     playAudio();
 }, delay);   
-
-runP5();}
+}
 
 }
 
