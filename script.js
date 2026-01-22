@@ -671,7 +671,10 @@ runP5();
 
 if (Phi <49) { 
 setState(ButtonState.AGAIN); 
-runTimeout();   
+runTimeout();
+setTimeout(function() {
+    sendTouchdesigner();
+}, delay);    
 }
 else {
     disableTimeout();
