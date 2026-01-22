@@ -124,12 +124,12 @@ function isInsideShape(x, y) {
 }
 const REM = parseFloat(getComputedStyle(document.documentElement).fontSize); // 1rem in px
 
-const DOT_DEFAULT_SIZE = 24 / 16 * REM;     // was 24px
+const DOT_DEFAULT_SIZE = 28 / 16 * REM;     // was 24px
 const DOT_TOUCH_DIAMETER = 32 / 16 * REM;   // was 32px
 const DOT_TOUCH_RADIUS = DOT_TOUCH_DIAMETER / 3; // auto scales
-const DOT_MAX_SIZE = 28 / 16 * REM;         // was 28px
+const DOT_MAX_SIZE = 32 / 16 * REM;         // was 28px
 
-const LINE_BASE_WIDTH = 2 / 16 * REM;       // was 2px
+const LINE_BASE_WIDTH = 4 / 16 * REM;       // was 2px
 const LINE_MAX_WIDTH = 18 / 16 * REM;       // was 18px
 // helpers
 function clientToLocal(e) {
