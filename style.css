@@ -387,3 +387,17 @@ align-items: center;
     filter: var(--bg-filter, grayscale(100%));
     z-index: -1;
   }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  *:focus,
+  *:focus-visible {
+    outline: none;
+  }
+  
+  html, body {
+    -webkit-user-select: none;
+    user-select: none;
+  }
