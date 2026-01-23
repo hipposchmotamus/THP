@@ -388,16 +388,3 @@ align-items: center;
     z-index: -1;
   }
 
-  * {
-    -webkit-tap-highlight-color: transparent;
-  }
-  
-  *:focus,
-  *:focus-visible {
-    outline: none;
-  }
-  
-  html, body {
-    -webkit-user-select: none;
-    user-select: none;
-  }
