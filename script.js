@@ -82,6 +82,7 @@ function resizeCanvas() {
     if (shapeReady) loadShape();
     renderDots();
     drawAll();
+    sendTouchdesigner();
 }
 
 window.addEventListener('resize', resizeCanvas);
@@ -663,30 +664,27 @@ function consciousMode() {
 function resultMode() {
     locked = true;
 backButton.classList.add ("hidden");
- backButton.classList.remove ("visible");
+backButton.classList.remove ("visible");
 backButton.style.opacity ="0";
 resetButton.classList.add ("hidden");
 resetButton.classList.remove ("visible");
-runP5();
-
 if (Phi <49) { 
-setState(ButtonState.AGAIN); 
+    setState(ButtonState.AGAIN);    
+    }
+    else {
+        setState(ButtonState.END);
+    
+        var delay = 2000; //1 second
+    setTimeout(function() {
+        playAudio();
+    }, delay);   
+    }
+runP5();
 runTimeout();
+var delay = 2000; //1 second
 setTimeout(function() {
-    sendTouchdesigner();
-}, delay);    
-}
-else {
-    disableTimeout();
-    setState(ButtonState.HIDDEN);
-
-    var delay = 2000; //1 second
-
-setTimeout(function() {
-    sendTouchdesigner();
-    playAudio();
-}, delay);   
-}
+sendTouchdesigner();
+}, delay); 
 
 }
 
@@ -696,6 +694,11 @@ function performFullReset(){
     dots=[]; lines=[]; dragging=false; dragFrom=null; dragPos=null;
     firstDotCreated=false; secondDotCreated=false; firstConnectionCreated=false;
     Phi=0; counterText.innerText='0'; locked = false;
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+      }
    
 }
 
@@ -935,7 +938,8 @@ const ButtonState = {
     START: "start",
     CREATE: "create",
     AGAIN: "again",
-    HIDDEN: "hidden"
+    HIDDEN: "hidden",
+    END: "end",
   };
 
 let currentState = ButtonState.CREATE;
@@ -974,6 +978,17 @@ function renderButton(state) {
         
         break;
 
+        case ButtonState.END:
+            createButton.disabled = false;
+            createButton.style.opacity ="100%"
+        swap.style.width ="200px";
+        bottom.style.backgroundColor = "rgba(255, 255, 255, 0.50)";
+        createButton.innerText = "ENDE";
+        createButton.style.backgroundColor ="#96244C";
+        createButton.style.color ="white";
+        
+        break;
+
         case ButtonState.HIDDEN:
             bottom.style.backgroundColor = "rgba(255, 255, 255, 0.50)";
             createButton.disabled = true
@@ -992,7 +1007,7 @@ function renderButton(state) {
   }
 
   let idleTimeout = null;
-const IDLE_TIME = 60000; // example value
+const IDLE_TIME = 40000; // example value
 const idleEvents = ["mousemove", "mousedown", "keydown", "touchstart", "wheel"];
 
 function runTimeout() {
@@ -1086,6 +1101,12 @@ function disableTimeout() {
         wipeCanvas();
         performFullReset();
         gameMode();
+        break;
+
+    case ButtonState.END:
+        wipeCanvas();
+        performFullReset();
+        startMode();
         break;
   
     case ButtonState.HIDDEN:
