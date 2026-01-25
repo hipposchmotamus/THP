@@ -610,7 +610,7 @@ function startMode() {
 }
 
 function gameMode(){
-    runTimeout();
+   /* runTimeout(); */
 
 topPart.classList.add ("visible");
 topPart.classList.remove ("hidden");
@@ -640,7 +640,6 @@ setState(ButtonState.HIDDEN);
 
 
 function consciousMode() {
-
     topPart.classList.add ("visible");
     topPart.classList.remove ("hidden");
     topLeft.classList.add("hidden");
@@ -657,7 +656,7 @@ function consciousMode() {
     else {setState(ButtonState.CREATE);
         
     }
-    runTimeout();
+   /* runTimeout(); */
     }
 
 
@@ -1010,6 +1009,7 @@ function renderButton(state) {
 const IDLE_TIME = 40000; // example value
 const idleEvents = ["mousemove", "mousedown", "keydown", "touchstart", "wheel"];
 
+/*
 function runTimeout() {
 
   function onIdle() {
@@ -1050,7 +1050,7 @@ function disableTimeout() {
   console.log("Idle timeout disabled");
 }
 
-
+*/
   const audioSources = [
     "audio/C1.mp3",
     "audio/C2.mp3",
