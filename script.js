@@ -656,7 +656,11 @@ function consciousMode() {
     else {setState(ButtonState.CREATE);
         
     }
-   /* runTimeout(); */
+   /* runTimeout(); 
+    var delay = 2000; //1 second
+    setTimeout(function() {
+        playAudio();
+    }, delay);  */
     }
 
 
@@ -667,23 +671,16 @@ backButton.classList.remove ("visible");
 backButton.style.opacity ="0";
 resetButton.classList.add ("hidden");
 resetButton.classList.remove ("visible");
+runP5();
+sendTouchdesigner();
 if (Phi <49) { 
     setState(ButtonState.AGAIN);    
     }
     else {
         setState(ButtonState.END);
-    
-        var delay = 2000; //1 second
-    setTimeout(function() {
-        playAudio();
-    }, delay);   
+    playAudio();   
     }
-runP5();
-runTimeout();
-var delay = 2000; //1 second
-setTimeout(function() {
-sendTouchdesigner();
-}, delay); 
+
 
 }
 
