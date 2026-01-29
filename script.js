@@ -48,6 +48,8 @@ let dragPos = null; // {x,y} for temporary line
 let shapeReady = false, shapeCanvas, shapeCtx;
 let locked = false;
 
+let inResultMode = false;
+
 
 // metrics and flags
 let N = 0; // number of dots
@@ -565,6 +567,7 @@ function runP5(){
 
 
 function checkThreshold () {
+    if (inResultMode) return;
     console.log("checkThreshold called, Phi =", Phi);
     displayMessage ();
     
@@ -668,6 +671,10 @@ function consciousMode() {
 
 
 function resultMode() {
+
+     if (inResultMode) return;
+    inResultMode = true;
+
     locked = true;
 backButton.classList.add ("hidden");
 backButton.classList.remove ("visible");
@@ -677,6 +684,7 @@ resetButton.classList.remove ("visible");
 backButton.style.opacity ="0";
 runP5();
 sendTouchdesigner();
+
 if (Phi <49) { 
     setState(ButtonState.AGAIN);  
     runTimeout();  
@@ -686,8 +694,6 @@ if (Phi <49) {
         disableTimeout();
         playAudio();   
     }
-
-
 }
 
 
@@ -695,7 +701,7 @@ if (Phi <49) {
 function performFullReset(){
     dots=[]; lines=[]; dragging=false; dragFrom=null; dragPos=null;
     firstDotCreated=false; secondDotCreated=false; firstConnectionCreated=false;
-    Phi=0; counterText.innerText='0'; locked = false;
+    Phi=0; counterText.innerText='0'; locked = false; inResultMode = false;
     if (currentAudio) {
         currentAudio.pause();
         currentAudio.currentTime = 0;
@@ -1068,11 +1074,11 @@ function disableTimeout() {
   
   function playAudio() {
     // Stop any currently playing audio
-    if (currentAudio) {
+   /* if (currentAudio) {
       currentAudio.pause();
       currentAudio.currentTime = 0;
       currentAudio = null;
-    }
+    } */
   
     const randomIndex = Math.floor(Math.random() * audioSources.length);
     currentAudio = new Audio(audioSources[randomIndex]);
