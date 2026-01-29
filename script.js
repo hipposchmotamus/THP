@@ -7,6 +7,8 @@ const socket = new WebSocket("wss://kreatormator-7cd9cf35d253.herokuapp.com:443"
 
 socket.addEventListener('open', () => {
     console.log("✅ Connected to TouchDesigner");
+    let Phi = 0;
+    sendTouchdesigner();
 });
 
 socket.addEventListener('error', (err) => {
@@ -82,11 +84,11 @@ function resizeCanvas() {
     if (shapeReady) loadShape();
     renderDots();
     drawAll();
-    sendTouchdesigner();
 }
 
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
+
 
 function loadShape() {
     shapeCanvas = document.createElement('canvas');
@@ -348,11 +350,11 @@ function hasLoop(start) {
 }
 
 
-function limitPhi (){
+/*function limitPhi (){
     if (Phi > 54) {
         resultMode();
     }
-}
+} */
 
 // update READY and ON states and counters
 function updateStateAndCounters() {
@@ -592,6 +594,7 @@ function displayMessage (){
 
 
 function startMode() {
+    disableTimeout();
     topPart.classList.add ("hidden");
     topPart.classList.remove ("visible");
     locked = true;
@@ -610,8 +613,7 @@ function startMode() {
 }
 
 function gameMode(){
-   /* runTimeout(); */
-
+   runTimeout();
 topPart.classList.add ("visible");
 topPart.classList.remove ("hidden");
 topLeft.classList.add("visible");
@@ -640,6 +642,7 @@ setState(ButtonState.HIDDEN);
 
 
 function consciousMode() {
+    runTimeout();
     topPart.classList.add ("visible");
     topPart.classList.remove ("hidden");
     topLeft.classList.add("hidden");
@@ -671,14 +674,17 @@ backButton.classList.remove ("visible");
 backButton.style.opacity ="0";
 resetButton.classList.add ("hidden");
 resetButton.classList.remove ("visible");
+backButton.style.opacity ="0";
 runP5();
 sendTouchdesigner();
 if (Phi <49) { 
-    setState(ButtonState.AGAIN);    
+    setState(ButtonState.AGAIN);  
+    runTimeout();  
     }
     else {
         setState(ButtonState.END);
-    playAudio();   
+        disableTimeout();
+        playAudio();   
     }
 
 
@@ -1003,10 +1009,10 @@ function renderButton(state) {
   }
 
   let idleTimeout = null;
-const IDLE_TIME = 40000; // example value
+const IDLE_TIME = 50000; // example value
 const idleEvents = ["mousemove", "mousedown", "keydown", "touchstart", "wheel"];
 
-/*
+
 function runTimeout() {
 
   function onIdle() {
@@ -1047,7 +1053,6 @@ function disableTimeout() {
   console.log("Idle timeout disabled");
 }
 
-*/
   const audioSources = [
     "audio/C1.mp3",
     "audio/C2.mp3",
