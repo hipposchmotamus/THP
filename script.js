@@ -75,6 +75,7 @@ let thresholdTriggered = false;
 let lowthresholdTriggered = false;
 
 let audioUnlocked = false;
+let pendingResultMode = false;
 
 function unlockAudio() {
     if (audioUnlocked) return;
@@ -192,6 +193,11 @@ function createDot(x, y) {
     dots.push(dot);
 
     actions.push({ type: 'dot', dot });
+    
+    if (pendingResultMode) {
+        pendingResultMode = false;
+        resultMode(); // ✅ user-gesture safe
+    }
 
     updateStateAndCounters();
     updatebackButton();
@@ -236,6 +242,10 @@ function createLine(a, b) {
     b.inputs++;
 
     actions.push({ type: 'line', line });
+    if (pendingResultMode) {
+        pendingResultMode = false;
+        resultMode(); // ✅ user-gesture safe
+    }
 
     updateStateAndCounters();
     return line;
@@ -587,7 +597,7 @@ function checkThreshold () {
     }
 
     else if (Phi >59) {
-        resultMode();
+       pendingResultMode = true;
     }
 
     
@@ -680,7 +690,7 @@ function consciousMode() {
 
 function resultMode() {
 
-     if (inResultMode) return;
+   if (inResultMode) return;
     inResultMode = true;
 
     locked = true;
@@ -709,7 +719,8 @@ if (Phi <49) {
 function performFullReset(){
     dots=[]; lines=[]; dragging=false; dragFrom=null; dragPos=null;
     firstDotCreated=false; secondDotCreated=false; firstConnectionCreated=false;
-    Phi=0; counterText.innerText='0'; locked = false; inResultMode = false;
+    Phi=0; counterText.innerText='0'; locked = false;  pendingResultMode = false;
+    inResultMode = false;
     if (currentAudio) {
         currentAudio.pause();
         currentAudio.currentTime = 0;
