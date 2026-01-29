@@ -590,7 +590,7 @@ function checkThreshold () {
         consciousMode();
     }
 
-    else if (Phi >59) {
+    else if (Phi >49) {
        maxMode();
     }
 
@@ -603,8 +603,6 @@ function displayMessage (){
     message.innerText = "Kein Bewusstsein möglich."}
     else if (Phi <49) {
     message.innerText = "Einfaches Bewusstsein möglich."}
-    else if (Phi <59) {
-    message.innerText = "Komplexes Bewusstsein möglich."}
     else {
     message.innerText = "Du hast komplexes Bewusstsein erschaffen."}
 }
