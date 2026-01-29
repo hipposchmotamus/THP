@@ -73,16 +73,9 @@ let shapeLayout = null;
 let thresholdTriggered = false;
 let lowthresholdTriggered = false;
 
-let audioUnlocked = false;
 let inResultMode = false;
 let pendingResultMode = false;
 
-function unlockAudio() {
-    if (audioUnlocked) return;
-    const silent = new Audio();
-    silent.play().catch(() => {});
-    audioUnlocked = true;
-}
 
 const shapeImage = new Image();
 shapeImage.src = 'touchShape.png';
@@ -600,6 +593,7 @@ function checkThreshold () {
 
     else if (Phi >59) {
        pendingResultMode = true;
+       console.log ("thresholdisatfault");
     }
 
     
@@ -912,7 +906,7 @@ function onPointerUp(e) {
 }
 
 // bind pointer events
-container.addEventListener('pointerdown', unlockAudio, { once: true }, onPointerDown);
+container.addEventListener('pointerdown', onPointerDown);
 container.addEventListener('pointermove', onPointerMove);
 window.addEventListener('pointerup', onPointerUp);
 
@@ -1098,7 +1092,6 @@ function disableTimeout() {
   let currentAudio = null;
   
   function playAudio() {
-    if (!audioUnlocked) return;
 
     const randomIndex = Math.floor(Math.random() * audioSources.length);
     currentAudio = new Audio(audioSources[randomIndex]);
