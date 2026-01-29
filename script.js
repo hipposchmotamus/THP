@@ -610,6 +610,9 @@ function displayMessage (){
 
 function startMode() {
     disableTimeout();
+    bodyEl.style.opacity ="100%"
+    bodyEl.style.backgroundBlendMode ="normal"
+    bodyEl.style.background = "url('bg_black.jpg') no-repeat center center fixed";
     topPart.classList.add ("hidden");
     topPart.classList.remove ("visible");
     locked = true;
@@ -621,9 +624,6 @@ function startMode() {
     container.style.background = "url('typo.png') center/contain no-repeat";
     container.style.backgroundBlendMode="normal";
     container.style.opacity ="100%"
-    bodyEl.style.opacity ="100%"
-    bodyEl.style.backgroundBlendMode ="normal"
-    bodyEl.style.background = "url('bg_black.jpg') no-repeat center center fixed";
     setState(ButtonState.START);
 }
 
