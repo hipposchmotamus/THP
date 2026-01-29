@@ -74,6 +74,14 @@ let shapeLayout = null;
 let thresholdTriggered = false;
 let lowthresholdTriggered = false;
 
+let audioUnlocked = false;
+
+function unlockAudio() {
+    if (audioUnlocked) return;
+    const silent = new Audio();
+    silent.play().catch(() => {});
+    audioUnlocked = true;
+}
 
 const shapeImage = new Image();
 shapeImage.src = 'touchShape.png';
@@ -887,7 +895,7 @@ function onPointerUp(e) {
 }
 
 // bind pointer events
-container.addEventListener('pointerdown', onPointerDown);
+container.addEventListener('pointerdown', unlockAudio, { once: true }, onPointerDown);
 container.addEventListener('pointermove', onPointerMove);
 window.addEventListener('pointerup', onPointerUp);
 
@@ -1073,26 +1081,22 @@ function disableTimeout() {
   let currentAudio = null;
   
   function playAudio() {
-    // Stop any currently playing audio
-   /* if (currentAudio) {
-      currentAudio.pause();
-      currentAudio.currentTime = 0;
-      currentAudio = null;
-    } */
-  
+    if (!audioUnlocked) return;
+
     const randomIndex = Math.floor(Math.random() * audioSources.length);
     currentAudio = new Audio(audioSources[randomIndex]);
-  
+
     currentAudio.addEventListener("ended", () => {
-    wipeCanvas();
-    performFullReset();
-    startMode();
+        wipeCanvas();
+        performFullReset();
+        startMode();
     });
-  
+
     currentAudio.play().catch(err => {
-      console.error("Audio playback failed:", err);
+        console.error("Audio playback failed:", err);
     });
-  }
+}
+
 
   createButton.addEventListener("click", () => {
     switch (currentState) {
