@@ -48,7 +48,6 @@ let dragPos = null; // {x,y} for temporary line
 let shapeReady = false, shapeCanvas, shapeCtx;
 let locked = false;
 
-let inResultMode = false;
 
 
 // metrics and flags
@@ -75,6 +74,7 @@ let thresholdTriggered = false;
 let lowthresholdTriggered = false;
 
 let audioUnlocked = false;
+let inResultMode = false;
 let pendingResultMode = false;
 
 function unlockAudio() {
@@ -242,6 +242,7 @@ function createLine(a, b) {
     b.inputs++;
 
     actions.push({ type: 'line', line });
+
     if (pendingResultMode) {
         pendingResultMode = false;
         resultMode(); // ✅ user-gesture safe
@@ -594,6 +595,7 @@ function checkThreshold () {
 
     else if (Phi <59) {
         consciousMode();
+        pendingResultMode =false;
     }
 
     else if (Phi >59) {
@@ -635,6 +637,9 @@ function startMode() {
 
 function gameMode(){
    runTimeout();
+   locked = false;
+   inResultMode =false;
+   pendingResultMode =false;
 topPart.classList.add ("visible");
 topPart.classList.remove ("hidden");
 topLeft.classList.add("visible");
@@ -651,7 +656,6 @@ topRight.classList.remove("hidden");
 
     resetButton.classList.add("visible");
     resetButton.classList.remove("hidden");
-locked = false;
 container.style.opacity ="90%"
 container.style.background = "url('background_color.png') center/contain no-repeat";
 container.style.setProperty('--bg-filter', `grayscale(${100}%)`);  
@@ -664,6 +668,8 @@ setState(ButtonState.HIDDEN);
 
 function consciousMode() {
     runTimeout();
+    locked = false;
+    inResultMode =false;
     topPart.classList.add ("visible");
     topPart.classList.remove ("hidden");
     topLeft.classList.add("hidden");
