@@ -664,6 +664,9 @@ function consciousMode() {
     runTimeout();
     locked = false;
     inResultMode =false;
+    bodyEl.style.opacity ="100%"
+bodyEl.style.backgroundBlendMode ="normal"
+bodyEl.style.background = "url('bg_main.jpg') center/cover no-repeat fixed";
     topPart.classList.add ("visible");
     topPart.classList.remove ("hidden");
     topLeft.classList.add("hidden");
@@ -689,6 +692,9 @@ function consciousMode() {
 
 function maxMode () {runTimeout();
     locked = true;
+    bodyEl.style.opacity ="100%"
+bodyEl.style.backgroundBlendMode ="normal"
+bodyEl.style.background = "url('bg_highphi.jpg') center/cover no-repeat fixed";
     topPart.classList.add ("visible");
     topPart.classList.remove ("hidden");
     topLeft.classList.add("hidden");
@@ -719,7 +725,7 @@ sendTouchdesigner();
 
 if (Phi <49) { 
     setState(ButtonState.AGAIN);  
-    runTimeout();  
+    runTimeout(); 
     }
     else {
         setState(ButtonState.END);
