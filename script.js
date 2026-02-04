@@ -131,8 +131,8 @@ function isInsideShape(x, y) {
 }
 const REM = parseFloat(getComputedStyle(document.documentElement).fontSize); // 1rem in px
 
-const DOT_DEFAULT_SIZE = 28 / 16 * REM;     // was 24px
-const DOT_TOUCH_DIAMETER = 32 / 16 * REM;   // was 32px
+const DOT_DEFAULT_SIZE = 32 / 16 * REM;     // was 24px
+const DOT_TOUCH_DIAMETER = 34 / 16 * REM;   // was 32px
 const DOT_TOUCH_RADIUS = DOT_TOUCH_DIAMETER / 3; // auto scales
 const DOT_MAX_SIZE = 32 / 16 * REM;         // was 28px
 
